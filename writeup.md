@@ -47,7 +47,7 @@ The goals / steps of this project are the following:
 
 #### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
 
-The code for this step is defined as function named `calCamera(...)` in IPython notebook located in `./pipeline_code.ipynb`
+The code for this step is defined IN function named `calCamera(...)` in IPython notebook located in `./pipeline_code.ipynb`
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `obj_pnt` is just a replicated array of coordinates, and `obj_pnts` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `img_pnts` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection. Here is an example of corners found on board:
 
@@ -61,9 +61,10 @@ I then used the output `obj_pnts` and `img_pnts` to compute the camera calibrati
 
 #### 1. Provide an example of a distortion-corrected image.
 
-To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
+Apply 'cv.undistort(...)' to images using the intrinsic matrix and distortion coefficient obtained from calibration step. Two examples of undistorted images are given: 
 ![undistorted image 1][undist_img1]
 ![undistorted image 2][undist_img2]
+
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
 I used a combination of color and gradient thresholds to generate a binary image (defined as function  `hls_select(...)` in `pipeline_code.ipynb`). 
@@ -71,14 +72,14 @@ I used a combination of color and gradient thresholds to generate a binary image
      binary_output[((sat>30)&(lig>30)&(abs_sobel_thresh(img,orient='x' sobel_kernel=5, thresh=(15, 255))==1))|(lig>200)|((lig>140)&(sat>100))] = 1
 ```
 
-Here's an example of my output for this step.  (note: this is not actually from one of the test images) 
+Here's two examples of my output for this step.  
 
 ![filtered image 1][filtered_img1]
 ![filtered image 2][filtered_img1]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warper(...)`, which appears in `pipeline_code.ipynb`  The `warper(...)` function takes as inputs an image (`img`), In the warper function, another function `warpTrsf()` which will return the  Perspective Transform Matrix. I chose the hardcode the source and destination points in the following manner:
+The code for my perspective transform includes a function called `warper(...)`, which appears in `pipeline_code.ipynb`  The `warper(...)` function takes as inputs an image (`img`), In the warper function, another function `warpTrsf()`  will return the  Perspective Transform Matrix. I chose the hardcode the source and destination points in the following manner:
 
 ```python
  src = np.array([[245, 692],[1058, 692],[702, 460],[582, 460]], np.float32)
@@ -96,14 +97,14 @@ This resulted in the following source and destination points:
 | 702, 460      | 960, 72       |
 | 582, 460      | 320, 72       |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
+Here's two examples of my output for this step.  
 
 ![warped image1][warped_img1]
 ![warped image2][warped_img2]
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
 First I need to check if previous knowledge of polynomial line is avaliable. If avaliable, it will search in the neighbor of previous polynomial(defined in  function `search_around_poly(...)` ). Otherwise, it will search from scratch(defined in  function `search_blind(...)` ).
 
-To search blind, I first use histogram to find out the most likely `x` coordinates for left lane and right lane as the start x-centre point. Then I search from bottom to top trying to find all pixels with none-zero value. The x-centre point will be re-centreed whenever there are more than 40 pixels found. 
+To search blindly, I first use histogram to find out the most likely `x` coordinates for left lane and right lane as the start x-centre point. Then I search from bottom to top trying to find all pixels with none-zero value in searching windows. The x-centre point will be re-centreed whenever there are more than 40 pixels found. 
 
 To search around known polynomial, I use the x coordinate on the polynomial as x-centre point and search from bottom to top.
 
@@ -113,16 +114,18 @@ Then I fit my lane lines with a 2nd order polynomial kinda like this:
 ![polyfit1][polyfit1]
 ![polyfit2][polyfit2]
 #### 4. The line sanity checking and smoothinng
-The sanity check process is defined in function `sanityCheck` in `pipeline_code.ipynb`.
-It first choose more than 10 points equually seperated in y-direction from left polyfit and obtain the pamameters for lines perpendicular to each point respectively. Then find the intersection points between right polyfit and the perpendicular lines. Find the distance between points left polyfit and right polyfit in pair and calculate the standard deviation. Polyfit lines with standard deviation less than 50 are regarded reasonable. 
+The sanity check process is defined in function `sanityCheck(...)` in `pipeline_code.ipynb`.
+It first choose more than 10 points equally seperated in y-direction from left polyfit line and obtain the pamameters for lines perpendicular to each of these points respectively. Then find the intersection points between right polyfit line and the perpendicular lines. Following this I need to find the distance between points on left polyfit and right polyfit in pair and calculate the standard deviation. Polyfit lines pair with standard deviation less than 50 are regarded reasonable. 
 
 The smoother is defined as a class `Lines` in `pipeline_code.ipynb`. 
 This class has following attribute: 
-- _line_queue
-- _queue_size
-- _bad_frame_count
-When add new polifit lines, it will first perform sanity checking. 
+- `_line_queue`: a deque to store previous detected valid polyfit lines
+- `_queue_size`: define the max length of queue. 
+- `_bad_frame_count`: keep track of the number of successive invalid lines. 
+When add new polifit lines (using `Lines.addLine(...)` method), it will first perform sanity checking. If valid, reset `_bad_frame_count` to 0 and  push new polyfit lines (left and right pair) to the back of queue. If _queue_size is reached, pop line pair in front.
+If invalid, increase `_bad_frame_count` by 1.
 
+`Lines.avgLine()`  will return averaged line pair if `_line_queue` is not empty and `_bad_frame_count` less than 10. Otherwise, return `[None, None]`
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
 I did this in function `measure_curvature_real(...)` in `pipeline_code.ipynb`.
@@ -151,4 +154,4 @@ Here's a [link to my video result](./test_videos_output/project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+Although my pipeline can work well on `project_video.mp4`, the performance on challenge video  is not so elegant. I tried to tune the hls color filter and gradient filter parameter. I saw a hint of improvement. Later I will spent some time on the challenge video, hopefully I can get some good result. 
