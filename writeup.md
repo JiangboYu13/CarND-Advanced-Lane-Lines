@@ -20,9 +20,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [corner_board]: ./output_images/draw_on_board/DRAW_calibration3.jpg 
-[undist_corner_board]: ./output_images/undis/calibration3.jpg 
-[undist_img1]: ./output_images/undis/test4.jpg 
-[undist_img2]: ./output_images/undis/test5.jpg 
+[undist_corner_board]: ./output_images/undist/calibration3.jpg 
+[undist_img1]: ./output_images/undist/test4.jpg 
+[undist_img2]: ./output_images/undist/test5.jpg 
 [filtered_img1]: ./output_images/filtered/test4.jpg 
 [filtered_img2]: ./output_images/filtered/test5.jpg 
 [warped_img1]: ./output_images/warped/test4.jpg 
