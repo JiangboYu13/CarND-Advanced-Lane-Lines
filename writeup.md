@@ -19,21 +19,21 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[corner_board]: ./output_images/DRAW_calibration3.jpg "calibration board"
-[undist_corner_board]: ./output_images/undis/calibration3.jpg "undistorted calibration board"
-[undist_img1]: ./output_images/undis/test4.jpg "undistorted image 1"
-[undist_img2]: ./output_images/undis/test5.jpg "undistorted image 2"
-[filtered_img1]: ./output_images/filtered/test4.jpg "filtered image 1"
-[filtered_img2]: ./output_images/filtered/test5.jpg "filtered image 2"
-[warped_img1]: ./output_images/warped/test4.jpg "warped image 1"
-[warped_img2]: ./output_images/warped/test5.jpg "warped image 2"
-[hist1]: ./output_images/histogram/test4.jpg "histogram 1"
-[hist2]: ./output_images/histogram/test5.jpg "histogram 2"
-[polyfit1]: ./output_images/polyfit/test4.jpg "polyfit ressult 1"
-[polyfit2]: ./output_images/polyfit/test5.jpg "polyfit ressult 2"
-[result1]: ./output_images/result/test4.jpg "ressult image 1"
-[result2]: ./output_images/result/test5.jpg "ressult image 2"
-[result_video]: ./test_videos_output/project_video.mp4 "Video"
+[corner_board]: ./output_images/draw_on_board/DRAW_calibration3.jpg 
+[undist_corner_board]: ./output_images/undis/calibration3.jpg 
+[undist_img1]: ./output_images/undis/test4.jpg 
+[undist_img2]: ./output_images/undis/test5.jpg 
+[filtered_img1]: ./output_images/filtered/test4.jpg 
+[filtered_img2]: ./output_images/filtered/test5.jpg 
+[warped_img1]: ./output_images/warped/test4.jpg 
+[warped_img2]: ./output_images/warped/test5.jpg 
+[hist1]: ./output_images/histogram/test4.jpg 
+[hist2]: ./output_images/histogram/test5.jpg 
+[polyfit1]: ./output_images/polyfit/test4.jpg 
+[polyfit2]: ./output_images/polyfit/test5.jpg 
+[result1]: ./output_images/result/test4.jpg 
+[result2]: ./output_images/result/test5.jpg 
+[result_video]: ./test_videos_output/project_video.mp4 
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
 
